@@ -35,8 +35,7 @@ All endpoints except `/health` and `GET /star-packs` require `Authorization: Bea
 
 ```bash
 cp .env.example .env
-# fill in DATABASE_URL, FIREBASE_PROJECT_ID, FIREBASE_SERVICE_ACCOUNT_BASE64,
-# ANDROID_PACKAGE_NAME, GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
+# fill in DATABASE_URL, FIREBASE_SERVICE_ACCOUNT_BASE64, GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
 
 npm install
 npm run migrate:dev
@@ -58,7 +57,7 @@ For local curl testing without a real Firebase token, set `ALLOW_DEV_AUTH=true` 
 
 1. Push this `backend/` repo to GitHub.
 2. In Render, "New +" → "Blueprint" → point at the repo. Render reads `render.yaml` automatically.
-3. In the Render dashboard, set the secrets marked `sync: false` in `render.yaml`: `FIREBASE_PROJECT_ID`, `FIREBASE_SERVICE_ACCOUNT_BASE64`, `ANDROID_PACKAGE_NAME`, `GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64`.
+3. In the Render dashboard, set the secrets marked `sync: false` in `render.yaml`: `FIREBASE_SERVICE_ACCOUNT_BASE64`, `GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64`.
 4. Deploy. Health checks hit `/health`.
 
 ### Manual dashboard steps (outside this repo)

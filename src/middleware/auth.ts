@@ -6,9 +6,10 @@ import { HttpError } from "../errors/HttpError";
 if (!admin.apps.length) {
   const serviceAccountJson = Buffer.from(config.firebaseServiceAccountBase64, "base64").toString("utf8");
   const serviceAccount = JSON.parse(serviceAccountJson);
+  // admin.credential.cert() reads project_id out of the service account JSON itself, so no
+  // separate FIREBASE_PROJECT_ID env var is needed.
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    projectId: config.firebaseProjectId,
   });
 }
 

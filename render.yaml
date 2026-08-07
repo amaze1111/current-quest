@@ -24,11 +24,7 @@ services:
       - key: ALLOW_DEV_AUTH
         value: "false"
       # Secrets — set these in the Render dashboard, never given values here.
-      - key: FIREBASE_PROJECT_ID
-        sync: false
       - key: FIREBASE_SERVICE_ACCOUNT_BASE64
-        sync: false
-      - key: ANDROID_PACKAGE_NAME
         sync: false
       - key: GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
         sync: false

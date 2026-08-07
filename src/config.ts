@@ -37,12 +37,15 @@ export const config = {
     .map((s) => s.trim())
     .filter(Boolean),
 
-  firebaseProjectId: required("FIREBASE_PROJECT_ID"),
-  // Full service account JSON, base64-encoded, so it survives being pasted into a single env var field.
+  // Full service account JSON, base64-encoded, so it survives being pasted into a single env
+  // var field. The Firebase project id is not configured separately — it's read out of this
+  // JSON's own project_id field (see src/middleware/auth.ts).
   firebaseServiceAccountBase64: required("FIREBASE_SERVICE_ACCOUNT_BASE64"),
 
   // Google Play Developer API — used to verify star-pack purchase tokens server-side.
-  androidPackageName: required("ANDROID_PACKAGE_NAME"),
+  // The package name is this app's fixed applicationId (app/build.gradle), not per-environment
+  // config, so it's a constant rather than an env var.
+  androidPackageName: "com.current.quest.logic.puzzle.game",
   googlePlayServiceAccountBase64: required("GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64"),
 
   allowDevAuth,
