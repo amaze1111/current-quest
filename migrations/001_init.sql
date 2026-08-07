@@ -1,4 +1,9 @@
 -- Idempotent schema: safe to run repeatedly against the same database.
+-- This database instance is shared with other apps, so all objects live in their own
+-- schema rather than public; src/db/pool.ts sets search_path=current_quest,public on every
+-- connection so the unqualified names below resolve here.
+
+CREATE SCHEMA IF NOT EXISTS current_quest;
 
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,               -- Firebase uid

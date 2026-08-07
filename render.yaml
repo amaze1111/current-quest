@@ -1,8 +1,7 @@
-databases:
-  - name: current-quest-db
-    plan: free
-    databaseName: current_quest
-    user: current_quest
+# No `databases:` block here — this service reuses an existing free Postgres instance
+# shared with another app, isolated via the current_quest schema (see migrations/001_init.sql
+# and src/db/pool.ts). Set DATABASE_URL manually in the Render dashboard to that instance's
+# connection string; it is not provisioned by this file.
 
 services:
   - type: web
@@ -17,9 +16,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        fromDatabase:
-          name: current-quest-db
-          property: connectionString
+        sync: false
       - key: DATABASE_SSL
         value: "true"
       - key: CORS_ORIGINS
