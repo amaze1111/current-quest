@@ -17,12 +17,10 @@ services:
         value: production
       - key: DATABASE_URL
         sync: false
-      - key: DATABASE_SSL
-        value: "true"
       - key: CORS_ORIGINS
         value: "*"
-      - key: ALLOW_DEV_AUTH
-        value: "false"
+      # DATABASE_SSL and ALLOW_DEV_AUTH are intentionally not set here — src/config.ts
+      # already defaults them to true/false (respectively) whenever NODE_ENV=production.
       # Secrets — set these in the Render dashboard, never given values here.
       - key: FIREBASE_SERVICE_ACCOUNT_BASE64
         sync: false
