@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "Server-authoritative backend for Current Quest: level progress, star economy, and star pack purchase verification.",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\"",
@@ -38,6 +38,6 @@
     "typescript": "^5.5.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": "20.x"
   }
 }
