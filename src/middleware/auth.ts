@@ -1,16 +1,27 @@
 import { NextFunction, Request, Response } from "express";
-import * as admin from "firebase-admin";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import { config } from "../config";
 import { HttpError } from "../errors/HttpError";
 
-if (!admin.apps.length) {
-  const serviceAccountJson = Buffer.from(config.firebaseServiceAccountBase64, "base64").toString("utf8");
-  const serviceAccount = JSON.parse(serviceAccountJson);
-  // admin.credential.cert() reads project_id out of the service account JSON itself, so no
-  // separate FIREBASE_PROJECT_ID env var is needed.
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+// Firebase ID tokens are RS256-signed with Google's rotating public keys, so verifying one
+// only needs the (non-secret) project id + these public keys — no service-account credential,
+// unlike Google Play purchase verification in googlePlayClient.ts. This mirrors Firebase's
+// documented "verify ID tokens using a third-party JWT library" approach instead of pulling in
+// the full firebase-admin SDK for this one check.
+const FIREBASE_JWKS = createRemoteJWKSet(
+  new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com")
+);
+
+async function verifyFirebaseIdToken(idToken: string): Promise<string> {
+  const { payload } = await jwtVerify(idToken, FIREBASE_JWKS, {
+    issuer: `https://securetoken.google.com/${config.firebaseProjectId}`,
+    audience: config.firebaseProjectId,
   });
+
+  if (typeof payload.sub !== "string" || payload.sub.length === 0) {
+    throw new Error("Token missing sub claim");
+  }
+  return payload.sub;
 }
 
 export interface AuthedRequest extends Request {
@@ -37,8 +48,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     }
 
     const idToken = header.slice("Bearer ".length).trim();
-    const decoded = await admin.auth().verifyIdToken(idToken);
-    (req as AuthedRequest).userId = decoded.uid;
+    (req as AuthedRequest).userId = await verifyFirebaseIdToken(idToken);
     next();
   } catch (err) {
     if (err instanceof HttpError) {

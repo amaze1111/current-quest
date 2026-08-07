@@ -21,8 +21,9 @@ services:
         value: "*"
       # DATABASE_SSL and ALLOW_DEV_AUTH are intentionally not set here — src/config.ts
       # already defaults them to true/false (respectively) whenever NODE_ENV=production.
-      # Secrets — set these in the Render dashboard, never given values here.
-      - key: FIREBASE_SERVICE_ACCOUNT_BASE64
-        sync: false
+      # No FIREBASE_SERVICE_ACCOUNT_BASE64 here — ID tokens are verified against Firebase's
+      # public keys (src/middleware/auth.ts), not a service-account secret.
+      # GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64 — optional, only needed once Play Billing is wired
+      # into the Android app; set it in the Render dashboard when that's ready.
       - key: GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64
         sync: false

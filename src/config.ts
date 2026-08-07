@@ -37,16 +37,20 @@ export const config = {
     .map((s) => s.trim())
     .filter(Boolean),
 
-  // Full service account JSON, base64-encoded, so it survives being pasted into a single env
-  // var field. The Firebase project id is not configured separately — it's read out of this
-  // JSON's own project_id field (see src/middleware/auth.ts).
-  firebaseServiceAccountBase64: required("FIREBASE_SERVICE_ACCOUNT_BASE64"),
+  // Firebase project id (app/google-services.json's project_info.project_id) — not a secret,
+  // just identifies which project's ID tokens to accept. Fixed for this app, like
+  // androidPackageName below, so it's a constant rather than an env var. Verifying a Firebase
+  // ID token only needs this plus Google's public signing keys (see src/middleware/auth.ts) —
+  // no service-account credential required, unlike the Play verification below.
+  firebaseProjectId: "current-quest-eade4",
 
-  // Google Play Developer API — used to verify star-pack purchase tokens server-side.
-  // The package name is this app's fixed applicationId (app/build.gradle), not per-environment
-  // config, so it's a constant rather than an env var.
+  // Google Play Developer API — used to verify star-pack purchase tokens server-side. Unlike
+  // Firebase ID token verification, this calls a private, authenticated Google API, so it
+  // genuinely needs a service-account credential. Left optional (undefined until set) since
+  // the Android app doesn't have Play Billing wired up yet — src/services/googlePlayClient.ts
+  // throws a clear runtime error only if /purchases/verify is actually hit before this is set.
   androidPackageName: "com.current.quest.logic.puzzle.game",
-  googlePlayServiceAccountBase64: required("GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64"),
+  googlePlayServiceAccountBase64: process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_BASE64,
 
   allowDevAuth,
 
