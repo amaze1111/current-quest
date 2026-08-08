@@ -86,5 +86,10 @@ export async function verifyAndCreditPurchase(
     });
   }
 
+  console.log(
+    `[purchase] user=${userId} product=${productId} starsCredited=${result.starsCredited} ` +
+      `alreadyProcessed=${result.alreadyProcessed} starBalance=${result.starBalance}`
+  );
+
   return { productId, ...result };
 }

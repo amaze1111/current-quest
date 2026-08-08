@@ -34,10 +34,12 @@ export async function useHint(userId: string, hintType: HintType, idempotencyKey
     const dedupeKey = `hint_use:${userId}:${idempotencyKey}`;
     const alreadyCharged = await client.query(`SELECT id FROM star_ledger WHERE dedupe_key = $1`, [dedupeKey]);
     if (alreadyCharged.rowCount && alreadyCharged.rowCount > 0) {
+      console.log(`[hint_use] user=${userId} type=${hintType} charged=false (dedupe) starBalance=${currentBalance}`);
       return { hintType, cost, charged: false, starBalance: currentBalance };
     }
 
     if (currentBalance < cost) {
+      console.log(`[hint_use] user=${userId} type=${hintType} rejected: insufficient_stars (have ${currentBalance}, need ${cost})`);
       throw HttpError.badRequest("insufficient_stars", `Need ${cost} stars, have ${currentBalance}`);
     }
 
@@ -55,6 +57,7 @@ export async function useHint(userId: string, hintType: HintType, idempotencyKey
         `SELECT star_balance FROM users WHERE id = $1`,
         [userId]
       );
+      console.log(`[hint_use] user=${userId} type=${hintType} charged=false (race) starBalance=${balanceAfter.rows[0].star_balance}`);
       return { hintType, cost, charged: false, starBalance: balanceAfter.rows[0].star_balance };
     }
 
@@ -63,6 +66,7 @@ export async function useHint(userId: string, hintType: HintType, idempotencyKey
       [cost, userId]
     );
 
+    console.log(`[hint_use] user=${userId} type=${hintType} charged=true cost=${cost} starBalance=${updated.rows[0].star_balance}`);
     return { hintType, cost, charged: true, starBalance: updated.rows[0].star_balance };
   });
 }

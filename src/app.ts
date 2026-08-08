@@ -1,6 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import morgan from "morgan";
 import { config } from "./config";
 import { healthRouter } from "./routes/health";
 import { meRouter } from "./routes/me";
@@ -20,6 +21,9 @@ export function createApp() {
     })
   );
   app.use(express.json());
+
+  // Skips /health so Render's periodic health-check pings don't drown out real traffic.
+  app.use(morgan("tiny", { skip: (req) => req.path === "/health" }));
 
   app.use(healthRouter);
   app.use(meRouter);

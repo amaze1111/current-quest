@@ -82,6 +82,11 @@ export async function completeLevel(userId: string, levelId: number, timeMs: num
       [userId]
     );
 
+    console.log(
+      `[level_complete] user=${userId} level=${levelId} timeMs=${timeMs} ` +
+        `starsAwarded=${Math.max(starsAwardedThisCall, 0)} starBalance=${balanceRow.rows[0].star_balance}`
+    );
+
     return {
       levelId,
       bestTimeMs,
